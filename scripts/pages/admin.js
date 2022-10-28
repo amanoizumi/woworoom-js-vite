@@ -1,6 +1,6 @@
-import { apiPath, myPath, token } from './config.js';
-import { showSuccess, showError } from './utilities.js';
-import './admin-animation.js';
+import { apiPath, myPath, token } from '../config.js';
+import { showSuccess, showError } from '../utilities.js';
+import '../admin-animation.js';
 
 // DOM
 const orderBody = document.querySelector('.order-body');

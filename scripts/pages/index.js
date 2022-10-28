@@ -1,7 +1,7 @@
-import { apiPath, myPath } from './config.js';
-import { showSuccess, showError } from './utilities.js';
-import { currency } from './utilities.js';
-import './index-animation.js';
+import { apiPath, myPath } from '../config.js';
+import { showSuccess, showError } from '../utilities.js';
+import { currency } from '../utilities.js';
+import '../index-animation.js';
 
 // DOM
 const productSelect = document.querySelector('.productSelect');

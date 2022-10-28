@@ -1,5 +1,14 @@
 import { apiPath, myPath } from '../config.js';
+
+import { getFrontProductsApi } from '../api/front/products.js';
+import { getFrontCartsApi } from '../api/front/carts.js';
+import { deleteFrontAllCartsApi } from '../api/front/carts.js';
+import { deleteFrontCartsApi } from '../api/front/carts.js';
+import { patchFrontCartsProductNumApi } from '../api/front/carts.js';
+import { postFrontOrderApi } from '../api/front/orders.js';
+
 import { showSuccess, showError } from '../utilities.js';
+
 import { currency } from '../utilities.js';
 import '../index-animation.js';
 
@@ -21,8 +30,7 @@ const init = () => {
 
 // 取得產品列表
 const getProducts = () => {
-  axios
-    .get(`${apiPath}/customer/${myPath}/products`)
+  getFrontProductsApi()
     .then((res) => {
       productsData = res.data.products;
       renderProducts();
@@ -66,8 +74,7 @@ const renderProducts = (data = productsData) => {
 
 // 取得購物車資料
 const getCarts = () => {
-  axios
-    .get(`${apiPath}/customer/${myPath}/carts`)
+  getFrontCartsApi()
     .then((res) => {
       cartsData = res.data;
       renderCarts();
@@ -201,7 +208,6 @@ const cartsTemplate = (productsStr, totalCost) => {
 const cartsEventsHandler = (e) => {
   e.preventDefault();
   const doSomething = e.target.dataset.js;
-  console.log(doSomething);
   if (doSomething === undefined) return;
 
   if (doSomething === 'deleteAllCarts') {
@@ -211,9 +217,10 @@ const cartsEventsHandler = (e) => {
     deleteCartItem(id);
   } else if (doSomething === 'add' || doSomething === 'remove') {
     const { id } = e.target.dataset;
-    editItemNum(id, doSomething);
+    editCartsProductNum(id, doSomething);
   }
 };
+
 // 刪除購物車全部品項
 const deleteAllCart = () => {
   Swal.fire({
@@ -225,8 +232,7 @@ const deleteAllCart = () => {
     icon: 'warning',
   }).then((result) => {
     if (result.isConfirmed) {
-      axios
-        .delete(`${apiPath}/customer/${myPath}/carts`)
+      deleteFrontAllCartsApi()
         .then((res) => {
           cartsData = res.data;
           renderCarts();
@@ -240,8 +246,7 @@ const deleteAllCart = () => {
 };
 // 刪除購物車單一品項
 const deleteCartItem = (id) => {
-  axios
-    .delete(`${apiPath}/customer/${myPath}/carts/${id}`)
+  deleteFrontCartsApi(id)
     .then((res) => {
       cartsData = res.data;
       renderCarts();
@@ -252,7 +257,7 @@ const deleteCartItem = (id) => {
 };
 
 // 編輯購物車產品數量
-const editItemNum = (id, doSomething) => {
+const editCartsProductNum = (id, doSomething) => {
   let num = 0;
   cartsData.carts.forEach((item) => {
     if (item.id === id) {
@@ -269,8 +274,7 @@ const editItemNum = (id, doSomething) => {
       },
     };
 
-    axios
-      .patch(`${apiPath}/customer/${myPath}/carts`, obj)
+    patchFrontCartsProductNumApi(obj)
       .then((res) => {
         cartsData = res.data;
         renderCarts();
@@ -287,8 +291,7 @@ const editItemNum = (id, doSomething) => {
         quantity: num,
       },
     };
-    axios
-      .patch(`${apiPath}/customer/${myPath}/carts`, obj)
+    patchFrontCartsProductNumApi(obj)
       .then((res) => {
         cartsData = res.data;
         renderCarts();
@@ -382,8 +385,7 @@ const submitOrder = () => {
           },
         },
       };
-      axios
-        .post(`${apiPath}/customer/${myPath}/orders`, obj)
+      postFrontOrderApi(obj)
         .then((res) => {
           showSuccess('成功送出訂單');
           formEl.reset();

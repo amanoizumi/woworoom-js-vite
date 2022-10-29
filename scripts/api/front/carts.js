@@ -3,6 +3,9 @@ import { apiPath, myPath } from '../../config.js';
 export const getFrontCartsApi = () => {
   return axios.get(`${apiPath}/customer/${myPath}/carts`);
 };
+export const postFrontCartsApi = (obj) => {
+  return axios.post(`${apiPath}/customer/${myPath}/carts`, obj);
+};
 
 export const deleteFrontCartsApi = (id) => {
   return axios.delete(`${apiPath}/customer/${myPath}/carts/${id}`);

@@ -1,4 +1,10 @@
 import { apiPath, myPath, token } from '../config.js';
+
+import { getAdminOrdersApi } from '../api/admin/orders.js';
+import { deleteAdminOrderApi } from '../api/admin/orders.js';
+import { deleteAdminAllOrdersApi } from '../api/admin/orders.js';
+import { putAdminOrderApi } from '../api/admin/orders.js';
+
 import { showSuccess, showError } from '../utilities.js';
 import '../admin-animation.js';
 
@@ -13,9 +19,6 @@ const sectionTitle = document.querySelector('.section-title');
 let ordersData = [];
 const colorsArr = ['#301E5F', '#5434A7', '#9D7FEA', '#DACBFF'];
 
-const init = async () => {
-  await getOrderList();
-};
 // C3.js
 const renderC3 = () => {
   const btnChange = document.querySelectorAll('.btn-change');
@@ -148,9 +151,7 @@ changeDetail.addEventListener('click', showObjDetail);
 
 // 取得訂單列表
 const getOrderList = () => {
-  const url = `${apiPath}/admin/${myPath}/orders`;
-  axios
-    .get(url, token)
+  getAdminOrdersApi()
     .then((res) => {
       ordersData = res.data.orders;
       renderC3();
@@ -209,7 +210,7 @@ const sortOrders = (data = ordersData) => {
 
 // 秒轉換成日期字串
 const calcOrderDay = (num) => {
-  // UNIX 的時間戳記是毫秒，先把秒轉成毫秒
+  // 秒轉成毫秒
   num = num * 1000;
   const date = new Date(num);
 
@@ -268,8 +269,7 @@ const deleteOrder = (e) => {
     icon: 'warning',
   }).then((result) => {
     if (result.isConfirmed) {
-      axios
-        .delete(`${apiPath}/admin/${myPath}/orders/${id}`, token)
+      deleteAdminOrderApi(id)
         .then((res) => {
           res.data.orders;
           ordersData = res.data.orders;
@@ -300,8 +300,7 @@ const editOrder = (e) => {
       paid: !paid,
     },
   };
-  axios
-    .put(`${apiPath}/admin/${myPath}/orders`, obj, token)
+  putAdminOrderApi(obj)
     .then((res) => {
       ordersData = res.data.orders;
       renderOrder();
@@ -332,8 +331,7 @@ const deleteAllOrders = () => {
       icon: 'warning',
     }).then((result) => {
       if (result.isConfirmed) {
-        axios
-          .delete(`${apiPath}/admin/${myPath}/orders`, token)
+        deleteAdminAllOrdersApi()
           .then((res) => {
             ordersData = res.data.orders;
             sortOrder.value = '全部';

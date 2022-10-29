@@ -1,10 +1,13 @@
 import { apiPath, myPath } from '../config.js';
 
 import { getFrontProductsApi } from '../api/front/products.js';
+
 import { getFrontCartsApi } from '../api/front/carts.js';
 import { deleteFrontAllCartsApi } from '../api/front/carts.js';
 import { deleteFrontCartsApi } from '../api/front/carts.js';
 import { patchFrontCartsProductNumApi } from '../api/front/carts.js';
+import { postFrontCartsApi } from '../api/front/carts.js';
+
 import { postFrontOrderApi } from '../api/front/orders.js';
 
 import { showSuccess, showError } from '../utilities.js';
@@ -148,8 +151,8 @@ const addProductToCart = (e) => {
         quantity: 1,
       },
     };
-    axios
-      .post(`${apiPath}/customer/${myPath}/carts`, obj)
+
+    postFrontCartsApi(obj)
       .then((res) => {
         cartsData = res.data;
         renderCarts();
@@ -375,10 +378,6 @@ const submitOrder = () => {
       confirmButtonText: '確定',
     });
   } else {
-    inputs.forEach((input) => {
-      console.log(input.value);
-    });
-
     const obj = {
       data: {
         user: {

@@ -16,8 +16,49 @@ import '../index-animation.js';
 const productSelect = document.querySelector('.productSelect');
 const productWrap = document.querySelector('.productWrap');
 const shoppingCart = document.querySelector('.shoppingCart');
+
+const inputs = document.querySelectorAll(
+  '#orderForm input[type=text],#orderForm input[type=tel],#orderForm input[type=email],#orderForm select'
+);
 const formEl = document.querySelector('.orderInfo-form');
 const submit = document.querySelector('.orderInfo-btn');
+
+// 驗證物件
+const constraints = {
+  姓名: {
+    presence: {
+      message: '必填！',
+    },
+  },
+
+  電話: {
+    presence: {
+      message: '必填！',
+    },
+    format: {
+      pattern: '^09[0-9]{8}$',
+      message: '需符合手機的格式！',
+    },
+  },
+  Email: {
+    presence: {
+      message: '必填！',
+    },
+    email: {
+      message: '需符合電子信箱的格式！',
+    },
+  },
+  寄送地址: {
+    presence: {
+      message: '必填！',
+    },
+  },
+  交易方式: {
+    presence: {
+      message: '必填！',
+    },
+  },
+};
 
 // 暫存資料
 let productsData = [];
@@ -304,64 +345,26 @@ const editCartsProductNum = (id, doSomething) => {
 };
 
 // 訂單驗證
-const formCheck = () => {
-  const formObj = {
-    customerName: '',
-    customerPhone: '',
-    customerEmail: '',
-    customerAddress: '',
-    tradeWay: '',
-  };
-  const formElDom = [...formEl];
-  formElDom.pop();
-  formElDom.forEach((el) => {
-    formObj[el.id] = el.value.trim();
+const formValidate = () => {
+  const inputsArr = [...inputs];
+  inputsArr.pop();
+
+  inputsArr.forEach((item) => {
+    item.nextElementSibling.textContent = '';
   });
 
-  const objKeys = Object.keys(formObj);
-  const objValues = Object.values(formObj);
+  const errors = validate(formEl, constraints);
+  if (errors) {
+    const keys = Object.keys(errors);
+    const values = Object.values(errors);
 
-  // 如果資料有誤就賦值 false
-  let formIsOK = true;
-
-  // 空白驗證
-  for (let i = 0; i < objKeys.length - 1; i++) {
-    const megDOM = document.querySelector(`#${objKeys[i]}`);
-    if (objValues[i] === '') {
-      megDOM.nextElementSibling.textContent = '必填';
-      formIsOK = false;
-    } else {
-      megDOM.nextElementSibling.textContent = '';
-    }
+    keys.forEach((item, idx) => {
+      document.querySelector(`[data-message="${item}"]`).textContent = values[idx];
+    });
+  } else {
+    submitOrder();
   }
-  // 電話驗證(手機 10 碼)
-  const phoneRex = /^(09)[0-9]{8}$/;
-  const phoneStr = formObj.customerPhone;
-  const phoneMsg = document.querySelector('#customerPhone').nextElementSibling;
-
-  if (!phoneRex.test(phoneStr) && phoneStr !== '') {
-    phoneMsg.textContent = '不符合手機格式';
-    formIsOK = false;
-  } else if (phoneRex.test(phoneStr)) {
-    phoneMsg.textContent = '';
-  }
-
-  // Email
-  const emailRex = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-  const emailStr = formObj.customerEmail;
-  const emailMsg = document.querySelector('#customerEmail').nextElementSibling;
-
-  if (!emailRex.test(emailStr) && emailStr !== '') {
-    emailMsg.textContent = '不符合Email格式';
-    formIsOK = false;
-  } else if (emailRex.test(emailStr)) {
-    emailMsg.textContent = '';
-  }
-
-  if (formIsOK) return formObj;
 };
-
-formEl.addEventListener('change', formCheck);
 
 // 送出訂單
 const submitOrder = () => {
@@ -372,35 +375,37 @@ const submitOrder = () => {
       confirmButtonText: '確定',
     });
   } else {
-    const formData = formCheck();
-    if (formData !== undefined) {
-      const obj = {
-        data: {
-          user: {
-            name: formData.customerName,
-            tel: formData.customerPhone,
-            email: formData.customerEmail,
-            address: formData.customerAddress,
-            payment: formData.tradeWay,
-          },
+    inputs.forEach((input) => {
+      console.log(input.value);
+    });
+
+    const obj = {
+      data: {
+        user: {
+          name: inputs[0].value,
+          tel: inputs[1].value,
+          email: inputs[2].value,
+          address: inputs[3].value,
+          payment: inputs[4].value,
         },
-      };
-      postFrontOrderApi(obj)
-        .then((res) => {
-          showSuccess('成功送出訂單');
-          formEl.reset();
-          cartsData = {
-            carts: [],
-          };
-          renderCarts();
-        })
-        .catch((err) => {
-          showError(err);
-        });
-    }
+      },
+    };
+
+    postFrontOrderApi(obj)
+      .then((res) => {
+        showSuccess('成功送出訂單');
+        formEl.reset();
+        cartsData = {
+          carts: [],
+        };
+        renderCarts();
+      })
+      .catch((err) => {
+        showError(err);
+      });
   }
 };
 
-submit.addEventListener('click', submitOrder);
+submit.addEventListener('click', formValidate);
 
 init();

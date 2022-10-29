@@ -763,6 +763,10 @@
 .orderInfo-btn:hover {
   background-color: #301e5f;
 }
+/* .orderInfo-btn[disabled] {
+  background-color: #888888;
+  cursor: not-allowed;
+} */
 
 .orderPage-list {
   padding: 60px 10px;

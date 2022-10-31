@@ -1,5 +1,3 @@
-import { apiPath, myPath, token } from '../config.js';
-
 import { getAdminOrdersApi } from '../api/admin/orders.js';
 import { deleteAdminOrderApi } from '../api/admin/orders.js';
 import { deleteAdminAllOrdersApi } from '../api/admin/orders.js';

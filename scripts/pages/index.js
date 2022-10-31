@@ -1,5 +1,3 @@
-import { apiPath, myPath } from '../config.js';
-
 import { getFrontProductsApi } from '../api/front/products.js';
 
 import { getFrontCartsApi } from '../api/front/carts.js';
@@ -26,7 +24,7 @@ const inputs = document.querySelectorAll(
 const formEl = document.querySelector('.orderInfo-form');
 const submit = document.querySelector('.orderInfo-btn');
 
-// 驗證物件
+// 驗證表單用的物件
 const constraints = {
   姓名: {
     presence: {
@@ -66,7 +64,9 @@ const constraints = {
 // 暫存資料
 let productsData = [];
 let cartsData = {};
+let canSubmit = false;
 
+// 初始化：取得產品列表、取得購物車內容
 const init = () => {
   getProducts();
   getCarts();
@@ -172,7 +172,7 @@ productWrap.addEventListener('click', addProductToCart);
 
 // 渲染購物車
 const renderCarts = (data = cartsData) => {
-  // 購物車有東西就渲染出來
+  // 購物車有產品就渲染到畫面
   if (data.carts.length > 0) {
     let template = '';
     data.carts.forEach((item) => {
@@ -364,47 +364,58 @@ const formValidate = () => {
     keys.forEach((item, idx) => {
       document.querySelector(`[data-message="${item}"]`).textContent = values[idx];
     });
+    canSubmit = false;
   } else {
-    submitOrder();
+    canSubmit = true;
   }
 };
 
+formEl.addEventListener('change', formValidate);
+
 // 送出訂單
 const submitOrder = () => {
+  // 如果表單仍未通過驗證，按下 submit 按鈕後會重新驗證表單，不送出訂單
+  if (!canSubmit) {
+    formValidate();
+    return;
+  }
+
+  // 購物車沒商品也不能送出表單
   if (cartsData.carts.length === 0) {
     Swal.fire({
       title: `購物車內目前沒有商品喔！`,
       icon: 'warning',
       confirmButtonText: '確定',
     });
-  } else {
-    const obj = {
-      data: {
-        user: {
-          name: inputs[0].value,
-          tel: inputs[1].value,
-          email: inputs[2].value,
-          address: inputs[3].value,
-          payment: inputs[4].value,
-        },
-      },
-    };
-
-    postFrontOrderApi(obj)
-      .then((res) => {
-        showSuccess('成功送出訂單');
-        formEl.reset();
-        cartsData = {
-          carts: [],
-        };
-        renderCarts();
-      })
-      .catch((err) => {
-        showError(err);
-      });
+    return;
   }
+
+  const obj = {
+    data: {
+      user: {
+        name: inputs[0].value,
+        tel: inputs[1].value,
+        email: inputs[2].value,
+        address: inputs[3].value,
+        payment: inputs[4].value,
+      },
+    },
+  };
+
+  postFrontOrderApi(obj)
+    .then((res) => {
+      showSuccess('成功送出訂單');
+      formEl.reset();
+      cartsData = {
+        carts: [],
+      };
+      renderCarts();
+    })
+    .catch((err) => {
+      showError(err);
+    });
 };
 
-submit.addEventListener('click', formValidate);
+submit.addEventListener('click', submitOrder);
 
 init();

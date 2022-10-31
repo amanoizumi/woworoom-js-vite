@@ -1,3 +1,4 @@
+// 錯誤訊息 modal
 export const showError = (err) => {
   if (err.response.status === 400 || err.response.status === 403 || err.response.status === 404) {
     Swal.fire({
@@ -8,6 +9,7 @@ export const showError = (err) => {
   }
 };
 
+// 成功訊息 modal
 export const showSuccess = (mes) => {
   Swal.fire({
     icon: 'success',
@@ -17,6 +19,7 @@ export const showSuccess = (mes) => {
   });
 };
 
+// 千分號
 export const currency = (number) => {
   return '$' + number.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',');
 };

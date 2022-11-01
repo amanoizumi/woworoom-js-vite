@@ -29,6 +29,7 @@ const constraints = {
   姓名: {
     presence: {
       message: '必填！',
+      // 無法只輸入空字串
       allowEmpty: false,
     },
   },
@@ -36,7 +37,6 @@ const constraints = {
   電話: {
     presence: {
       message: '必填！',
-      allowEmpty: false,
     },
     format: {
       pattern: '^09[0-9]{8}$',
@@ -46,7 +46,6 @@ const constraints = {
   Email: {
     presence: {
       message: '必填！',
-      allowEmpty: false,
     },
     email: {
       message: '需符合電子信箱的格式！',

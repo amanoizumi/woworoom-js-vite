@@ -29,12 +29,14 @@ const constraints = {
   姓名: {
     presence: {
       message: '必填！',
+      allowEmpty: false,
     },
   },
 
   電話: {
     presence: {
       message: '必填！',
+      allowEmpty: false,
     },
     format: {
       pattern: '^09[0-9]{8}$',
@@ -44,6 +46,7 @@ const constraints = {
   Email: {
     presence: {
       message: '必填！',
+      allowEmpty: false,
     },
     email: {
       message: '需符合電子信箱的格式！',
@@ -52,11 +55,13 @@ const constraints = {
   寄送地址: {
     presence: {
       message: '必填！',
+      allowEmpty: false,
     },
   },
   交易方式: {
     presence: {
       message: '必填！',
+      allowEmpty: false,
     },
   },
 };
@@ -356,9 +361,8 @@ const formValidate = () => {
     item.nextElementSibling.textContent = '';
   });
 
-  inputsArr = inputsArr.map((item) => item.trim());
-
   const errors = validate(formEl, constraints);
+
   if (errors) {
     const keys = Object.keys(errors);
     const values = Object.values(errors);
@@ -395,10 +399,10 @@ const submitOrder = () => {
   const obj = {
     data: {
       user: {
-        name: inputs[0].value,
-        tel: inputs[1].value,
-        email: inputs[2].value,
-        address: inputs[3].value,
+        name: inputs[0].value.trim(),
+        tel: inputs[1].value.trim(),
+        email: inputs[2].value.trim(),
+        address: inputs[3].value.trim(),
         payment: inputs[4].value,
       },
     },

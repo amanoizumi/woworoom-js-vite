@@ -349,12 +349,14 @@ const editCartsProductNum = (id, doSomething) => {
 
 // 訂單驗證
 const formValidate = () => {
-  const inputsArr = [...inputs];
+  let inputsArr = [...inputs];
   inputsArr.pop();
 
   inputsArr.forEach((item) => {
     item.nextElementSibling.textContent = '';
   });
+
+  inputsArr = inputsArr.map((item) => item.trim());
 
   const errors = validate(formEl, constraints);
   if (errors) {

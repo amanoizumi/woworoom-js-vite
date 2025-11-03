@@ -1,7 +1,5 @@
 ﻿# js-woworoom-ec-2022-vite
 
-# THE F2E 台灣旅遊景點導覽-vue3-TaiWalk
-
 **[前台 DEMO](https://amanoizumi.github.io/woworoom-js-vite/)**
 
 **[後台 DEMO](https://amanoizumi.github.io/woworoom-js-vite/admin.html)**
@@ -32,3 +30,4 @@ npm run build
 - assets # 靜態資源放置處
 - scripts # 工具與自訂 js 檔案放置處
 - main.js # 核心原始碼
+
